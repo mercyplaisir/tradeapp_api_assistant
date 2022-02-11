@@ -18,4 +18,4 @@ class BinanceClient:
 
     def get_balance(self) -> str:
         return self.client.get_account_snapshot(type="SPOT")["snapshotVos"]["data"]
-    
+
