@@ -1,0 +1,42 @@
+from dataclasses import dataclass, field
+
+import requests
+from binance.client import Client
+
+from helpers import date_to_milliseconds
+from sensitive import BINANCE_PUBLIC_KEY, BINANCE_PRIVATE_KEY
+
+
+def connect() -> Client:
+    """Connect to binance """
+    i = 0
+    while True:
+        print(f"connecting{'.' * i}")
+        try:
+            client = Client(BINANCE_PUBLIC_KEY, BINANCE_PRIVATE_KEY)
+            print(">>>Connected successfully to binance success")
+            break
+
+        except requests.exceptions.ConnectTimeout:
+            i += 1
+            pass
+    return client
+
+
+@dataclass
+class BinanceClient:
+    client: Client = field(init=False, default=connect())
+
+    def get_balance(self) -> dict:
+        # hour_ago: int = date_to_milliseconds("1 second ago")
+        nn = date_to_milliseconds("2 minutes ago") / 1000
+        return self.client.get_account_snapshot(type="SPOT", timestamp=nn, recvWindow=30000)["snapshotVos"][
+            "data"]
+        # return self.client.get_all_coins_info()
+
+    def get_timestamp(self):
+        gt = self.client.get_server_time()
+        # tt = time.gmtime(int((gt["serverTime"]) / 1000))
+
+        return int((gt["serverTime"]) / 1000)
+
