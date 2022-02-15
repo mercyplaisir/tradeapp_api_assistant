@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 import requests
 
+from common.binanceApi import BinanceClient
+
 order = {
     "symbol": "BNBBTC",
     "orderId": 28,
@@ -48,13 +50,7 @@ class Order:
 
 
 if __name__ == '__main__':
-    # req = requests.post("http://127.0.0.1:5000/tradeapp/status", data={'status': 'off'})
-    # print(req.json())
-    # req = requests.get("http://127.0.0.1:5000/telegram/status")
-    # print(req.json())
-    # req = requests.post("http://127.0.0.1:5000/tradeapp/status", data={'status': 'on'})
-    # print(req.json())
-    # req = requests.get("http://127.0.0.1:5000/telegram/status")
-    # print(req.json())
-    ord = Order(**order)
-    print(ord.save())
+    client = BinanceClient()
+    # print(client.get_timestamp())
+    # print(time)
+    print(client.get_balance())

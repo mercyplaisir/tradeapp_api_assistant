@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 import requests
 from binance.client import Client
 
-from helpers import date_to_milliseconds
-from sensitive import BINANCE_PUBLIC_KEY, BINANCE_PRIVATE_KEY
+from common.helpers import date_to_milliseconds
+from common.sensitive import BINANCE_PUBLIC_KEY, BINANCE_PRIVATE_KEY
 
 
 def connect() -> Client:
@@ -29,14 +29,21 @@ class BinanceClient:
 
     def get_balance(self) -> dict:
         # hour_ago: int = date_to_milliseconds("1 second ago")
-        nn = date_to_milliseconds("2 minutes ago") / 1000
-        return self.client.get_account_snapshot(type="SPOT", timestamp=nn, recvWindow=30000)["snapshotVos"][
-            "data"]
+        nn = date_to_milliseconds("3 days ago")
+        # nn = time.time()
+        return self.client.get_account_status(timestamp=nn)  # , timestamp=nn, recvWindow=30000)["snapshotVos"][
+        # "data"]
         # return self.client.get_all_coins_info()
 
     def get_timestamp(self):
         gt = self.client.get_server_time()
         # tt = time.gmtime(int((gt["serverTime"]) / 1000))
 
-        return int((gt["serverTime"]) / 1000)
+        return int((gt["serverTime"]))  # / 1000)
 
+
+if __name__ == '__main__':
+    client = BinanceClient()
+    # print(client.get_timestamp())
+    # print(time)
+    print(client.get_balance())
