@@ -10,10 +10,7 @@ from flask_restful import Resource
 from common.utils import get_history, get_status
 
 
-# binance_client = BinanceClient() # binance client
 
-
-# from common.binanceApi import BinanceClient
 
 
 class TlButtons:

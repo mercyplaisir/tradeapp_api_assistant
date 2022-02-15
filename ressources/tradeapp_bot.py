@@ -3,6 +3,7 @@
 Tradeapp bot wrapper handling file
 """
 from typing import Callable
+from enum import Enum
 
 from flask import request
 from flask_restful import Resource
@@ -10,12 +11,24 @@ from flask_restful import Resource
 from common.utils import update_history, set_status
 
 
-class TradeappButtons:
+class TradeappButtons(Enum):
     """
     tradeapp endpoints
     """
     STATUS = 'status'
     HISTORY = 'history'
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return self.value
+        
+    def __eq__(self, other):
+        return self.value == other
+
+    def __hash__(self):
+        return hash(self.value)
 
 
 class ApiModel:

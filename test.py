@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import requests
 
-from common.binanceApi import BinanceClient
+
 
 order = {
     "symbol": "BNBBTC",
@@ -50,7 +50,7 @@ class Order:
 
 
 if __name__ == '__main__':
-    client = BinanceClient()
-    # print(client.get_timestamp())
-    # print(time)
-    print(client.get_balance())
+    url ="http://127.0.0.1:5000"
+    endpoint = "/telegram/status"
+    req = requests.get(url+endpoint)
+    print(req.json())

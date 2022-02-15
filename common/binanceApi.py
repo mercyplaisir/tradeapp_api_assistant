@@ -42,8 +42,4 @@ class BinanceClient:
         return int((gt["serverTime"]))  # / 1000)
 
 
-if __name__ == '__main__':
-    client = BinanceClient()
-    # print(client.get_timestamp())
-    # print(time)
-    print(client.get_balance())
+
