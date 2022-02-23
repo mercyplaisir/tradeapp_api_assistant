@@ -11,9 +11,9 @@ from flask_restful import Resource
 from common.utils import update_history, set_status
 
 
-class TradeappButtons(Enum):
+class TradeappEndpoints(Enum):
     """
-    tradeapp endpoints
+    tradeappbot  knows endpoints
     """
     STATUS = 'status'
     HISTORY = 'history'
@@ -31,7 +31,7 @@ class TradeappButtons(Enum):
         return hash(self.value)
 
 
-class ApiModel:
+class TradeappModelHandler:
     """Handler this api model"""
 
     @classmethod
@@ -48,11 +48,11 @@ class ApiModel:
         return update_history(new_order)
 
 
-class TradeappBot(Resource):
-    """Flask's resource"""
+class TradeappBotController(Resource):
+    """Tradeapp Bot Flask's resource"""
     bt_action: dict[str, Callable] = {
-        TradeappButtons.STATUS: ApiModel.set_status,
-        TradeappButtons.HISTORY: ApiModel.append_history
+        TradeappEndpoints.STATUS: TradeappModelHandler.set_status,
+        TradeappEndpoints.HISTORY: TradeappModelHandler.append_history
         # TlButtons.BALANCE: TradeappModel.balance
     }
 
