@@ -16,6 +16,7 @@ from datetime import datetime
 def get_history() -> list[dict]:
     """return the trading history"""
     data = read_csv_file()
+    return data
 
 
 def update_trading_history(data: dict) -> bool:
@@ -73,7 +74,7 @@ def load_from_json_file(path):
 def write_in_json_file(path,data):
     with open(path,'w') as f:
         formatted_data = json.dumps(data)
-        f.write(data)
+        f.write(formatted_data)
 
 def append_dict_in_csv(path,data,newline='\n'):
     assert isinstance(data,dict),"must be a dict"

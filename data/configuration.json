@@ -1,5 +1,1 @@
-{
-    "status": "on",
-    "errors": { "type": "none", "value": "none" },
-    "profit": 0.0
-}
+{"profit": "35", "status": "on", "error": "no"}

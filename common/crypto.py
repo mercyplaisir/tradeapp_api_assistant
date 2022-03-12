@@ -8,7 +8,7 @@ import datetime
 import requests
 
 # from common.dbcontroller import DbEngine
-from dbcontroller import DbEngine
+from common.dbcontroller import DbEngine
 
 
 db = DbEngine()

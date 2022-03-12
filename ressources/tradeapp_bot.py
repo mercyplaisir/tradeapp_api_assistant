@@ -55,7 +55,8 @@ class TradeappBotController(Resource):
         'status': set_new_data,
         'history': update_trading_history,
         'profit': set_new_data,
-        'error': set_new_data
+        'error': set_new_data,
+        'all': set_new_data
         # TlButtons.BALANCE: TradeappModel.balance
     }
 
