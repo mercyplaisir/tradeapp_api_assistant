@@ -8,7 +8,7 @@ from enum import Enum
 from flask import request
 from flask_restful import Resource
 
-from common.utils import update_history, set_status
+from common.utils import update_trading_history,set_new_data# set_status
 
 
 class TradeappEndpoints(Enum):
@@ -38,25 +38,28 @@ class TradeappModelHandler:
     def set_status(cls, req_data: dict):
         """set new status"""
         new_status = req_data['status']
-        return set_status(new_status)
+        return set_new_data(new_status)
 
     @classmethod
     def append_history(cls, new_order: dict):
         """append the trading history"""
         if len(new_order) == 0:
             return None
-        return update_history(new_order)
+        return update_trading_history(new_order)
+    
 
 
 class TradeappBotController(Resource):
     """Tradeapp Bot Flask's resource"""
-    bt_action: dict[str, Callable] = {
-        TradeappEndpoints.STATUS: TradeappModelHandler.set_status,
-        TradeappEndpoints.HISTORY: TradeappModelHandler.append_history
+    post_action: dict[str, Callable] = {
+        'status': set_new_data,
+        'history': update_trading_history,
+        'profit': set_new_data,
+        'error': set_new_data
         # TlButtons.BALANCE: TradeappModel.balance
     }
 
     def post(self, message):
-        runner: callable = self.bt_action[message]
+        runner: callable = self.post_action[message]
         data: dict = request.form  # ['data']
         return runner(data), 200

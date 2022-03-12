@@ -8,58 +8,79 @@ import dateparser
 import math
 import pytz
 
+#filenames
+trades_file = "data/trades.csv"
+config_file = "data/configuration.json"
+
 from datetime import datetime
 def get_history() -> list[dict]:
     """return the trading history"""
+    data = read_csv_file()
+
+
+def update_trading_history(data: dict) -> bool:
+    """ Append the trading history"""
+    append_dict_in_csv(trades_file,data)
+
+
+
+def get_status() -> dict[str, str]:
+    """return the status"""
+    data = get_config_file()
+    return data.pop('status')
+
+def get_error():
+    data = get_config_file()
+    cleaned_data = dict_to_string(data['errors'])
+    return cleaned_data
+
+def get_profit():
+    data:dict = load_from_json_file(config_file)
+    return data.pop('profit')
+
+def get_config_file() -> dict:
+    data:dict = load_from_json_file(config_file)
+    return data
+
+def get_all():
+    data:dict = load_from_json_file(config_file)
+    return dict_to_string(data)
+    
+def set_new_data(new_data: dict) -> bool:
+    """Set the new status"""
+    data: dict = get_config_file()
+    data.update(new_data)
+    write_in_json_file(config_file,data)
+    
+#=================================================================================================
+#=============== From helpers===============================================
+#==================================================================
+
+
+def read_csv_file():
     data = []
-    # with open("../data/trades.csv", "r", newline='\n', encoding='utf-8') as csvfile:
-    with open("data/trades.csv", "r", newline='\n', encoding='utf-8') as csvfile:
+    with open(trades_file, "r", newline='\n', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             data.append(row)
     return json.dumps(data[1:])  # return data without the title(header)
 
+def load_from_json_file(path):
+    with open(path,'r') as f:
+        loaded_data = json.load(f)
+    return loaded_data
 
-def update_history(order: object) -> bool:
-    """ Append the trading history"""
-    with open("data/trades.csv", "a", newline='\n') as csvfile:
-        fieldnames = list(order.keys())
+def write_in_json_file(path,data):
+    with open(path,'w') as f:
+        formatted_data = json.dumps(data)
+        f.write(data)
+
+def append_dict_in_csv(path,data,newline='\n'):
+    assert isinstance(data,dict),"must be a dict"
+    with open(trades_file, "a", newline=newline) as csvfile:
+        fieldnames = list(data.keys())
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow(order)
-    return True
-
-
-def get_status() -> dict[str, str]:
-    """return the status"""
-    # with open("../data/configuration.json", 'r') as jsonfile:
-    with open("data/configuration.json", 'r') as jsonfile:
-        reader: dict = json.load(jsonfile)
-    return reader.pop('status')
-
-
-def _get_config_file() -> dict:
-    with open("data/configuration.json", 'r') as jsonfile:
-        reader = json.load(jsonfile)
-    return reader
-
-
-def set_status(new_status: str) -> bool:
-    """Set the new status"""
-    data: dict = _get_config_file()
-    data['status'] = new_status
-    with open("data/configuration.json", 'w') as jsonfile:
-        data_formated = json.dumps(data)
-        jsonfile.write(data_formated)
-
-    return True
-
-
-
-
-#=================================================================================================
-#=============== From helpers===============================================
-#==================================================================
-
+        writer.writerow(data)
 
 
 
@@ -125,3 +146,26 @@ def convert_ts_str(ts_str):
     if type(ts_str) == int:
         return ts_str
     return date_to_milliseconds(ts_str)
+
+def dict_to_string(d:dict,issubdict=False,level=0):
+    """change a string to a well formatted string"""
+
+    assert isinstance(d,dict), "must be a type dictionary"
+    assert len(d)>0, "the given dictionnary is empty"
+    dict_items = d.items()
+    formatted_string = ""
+    level=level #level of the dict
+
+    if issubdict:
+        formatted_string = "\n"+formatted_string
+    for key,value in dict_items:
+        if isinstance(value,dict):
+            new_level = level+1
+            value = dict_to_string(value,level=new_level,issubdict=True)
+        if issubdict:
+            nn='\t'*level
+            formatted_string += f"{nn}{key} : {value} \n"
+        else:
+            formatted_string += f"{key} : {value} \n"
+
+    return formatted_string

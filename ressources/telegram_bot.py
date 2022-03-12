@@ -8,50 +8,13 @@ from typing import Callable
 
 from flask_restful import Resource
 
-from common.utils import get_history, get_status
+from common.utils import get_history, get_status,get_all,get_error,get_profit
 
 
 
 
 
-class TlEndpoints(Enum):
-    """Telegram Buttons"""
-    HISTORY = 'history'
-    BALANCE = 'balance'
-    STATUS = 'status'
-    GET_ALL_COIN = 'all_crypto'
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return self.value
-        
-    def __eq__(self, other):
-        return self.value == other
-
-    def __hash__(self):
-        return hash(self.value)
-
-
-class TradeappModel:
-    """Class wrapper that retrieve info of tradeapp model"""
-
-    @classmethod
-    def status(cls) -> str:
-        """get tradeappbot status"""
-        return get_status()
-
-    @classmethod
-    def history(cls) -> list[dict]:
-        """get the trading history"""
-        return get_history()
-
-    @classmethod
-    def balance(cls):
-        """get the balance
-        # return binance_client.get_balance"""
-        return
+    
         
 class TelegramBot(Resource):
     """Frontend access to binance Info"""
@@ -59,9 +22,11 @@ class TelegramBot(Resource):
     # def get(self, message):  # , message):
     #     return binance_client.get_balance()
     bt_action: dict[str, Callable] = {
-        TlEndpoints.STATUS: TradeappModel.status,
-        TlEndpoints.HISTORY: TradeappModel.history,
-        TlEndpoints.BALANCE: TradeappModel.balance
+        'status': get_status,
+        'history': get_history,
+        'all': get_all,
+        'error': get_error,
+        'profit': get_profit
     }
 
     def get(self, message):
@@ -71,4 +36,5 @@ class TelegramBot(Resource):
 
 
 if __name__ == '__main__':
-    print(TlEndpoints.HISTORY)
+    """"""
+    # print(TlEndpoints.HISTORY)

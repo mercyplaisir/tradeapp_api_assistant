@@ -1,1 +1,5 @@
-{"status": "on", "errors": {"type": "none", "message": "none"}}
+{
+    "status": "on",
+    "errors": { "type": "none", "value": "none" },
+    "profit": 0.0
+}
