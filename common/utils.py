@@ -8,81 +8,90 @@ import dateparser
 import math
 import pytz
 
-#filenames
+# filenames
 trades_file = "data/trades.csv"
 config_file = "data/configuration.json"
 
 from datetime import datetime
-def get_history() -> list[dict]:
+
+
+def get_history() -> list[list]:
     """return the trading history"""
     data = read_csv_file()
     return data
 
 
 def update_trading_history(data: dict) -> bool:
-    """ Append the trading history"""
-    append_dict_in_csv(trades_file,data)
-
+    """Append the trading history"""
+    append_dict_in_csv(trades_file, data)
 
 
 def get_status() -> dict[str, str]:
     """return the status"""
     data = get_config_file()
-    return data.pop('status')
+    return data.pop("status")
+
 
 def get_error():
     data = get_config_file()
-    cleaned_data = dict_to_string(data['errors'])
+    cleaned_data = dict_to_string(data["errors"])
     return cleaned_data
 
+
 def get_profit():
-    data:dict = load_from_json_file(config_file)
-    return data.pop('profit')
+    data: dict = load_from_json_file(config_file)
+    return data.pop("profit")
+
 
 def get_config_file() -> dict:
-    data:dict = load_from_json_file(config_file)
+    data: dict = load_from_json_file(config_file)
     return data
 
+
 def get_all():
-    data:dict = load_from_json_file(config_file)
+    data: dict = load_from_json_file(config_file)
     return dict_to_string(data)
-    
+
+
 def set_new_data(new_data: dict) -> bool:
     """Set the new status"""
     data: dict = get_config_file()
     data.update(new_data)
-    write_in_json_file(config_file,data)
-    
-#=================================================================================================
-#=============== From helpers===============================================
-#==================================================================
+    write_in_json_file(config_file, data)
+
+
+# =================================================================================================
+# =============== From helpers===============================================
+# ==================================================================
 
 
 def read_csv_file():
     data = []
-    with open(trades_file, "r", newline='\n', encoding='utf-8') as csvfile:
+    with open(trades_file, "r", newline="\n", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             data.append(row)
-    return json.dumps(data[1:])  # return data without the title(header)
+    return data[1:]  # return data without the title(header)
+
 
 def load_from_json_file(path):
-    with open(path,'r') as f:
+    with open(path, "r") as f:
         loaded_data = json.load(f)
     return loaded_data
 
-def write_in_json_file(path,data):
-    with open(path,'w') as f:
+
+def write_in_json_file(path, data):
+    with open(path, "w") as f:
         formatted_data = json.dumps(data)
         f.write(formatted_data)
 
-def append_dict_in_csv(path,data,newline='\n'):
-    assert isinstance(data,dict),"must be a dict"
+
+def append_dict_in_csv(path, data, newline="\n"):
+    assert isinstance(data, dict), "must be a dict"
     with open(trades_file, "a", newline=newline) as csvfile:
         fieldnames = list(data.keys())
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writerow(data)
-
 
 
 def date_to_milliseconds(date_str: str) -> int:
@@ -97,7 +106,7 @@ def date_to_milliseconds(date_str: str) -> int:
     # get epoch value in UTC
     epoch: datetime = datetime.utcfromtimestamp(0).replace(tzinfo=pytz.utc)
     # parse our date string
-    d: Optional[datetime] = dateparser.parse(date_str, settings={'TIMEZONE': "UTC"})
+    d: Optional[datetime] = dateparser.parse(date_str, settings={"TIMEZONE": "UTC"})
     # if the date is not timezone aware apply UTC timezone
     if d.tzinfo is None or d.tzinfo.utcoffset(d) is None:
         d = d.replace(tzinfo=pytz.utc)
@@ -129,7 +138,9 @@ def interval_to_milliseconds(interval: str) -> Optional[int]:
         return None
 
 
-def round_step_size(quantity: Union[float, Decimal], step_size: Union[float, Decimal]) -> float:
+def round_step_size(
+    quantity: Union[float, Decimal], step_size: Union[float, Decimal]
+) -> float:
     """Rounds a given quantity to a specific step size
 
     :param quantity: required
@@ -148,25 +159,61 @@ def convert_ts_str(ts_str):
         return ts_str
     return date_to_milliseconds(ts_str)
 
-def dict_to_string(d:dict,issubdict=False,level=0):
+
+def dict_to_string(d: dict, issubdict=False, level=0):
     """change a string to a well formatted string"""
 
-    assert isinstance(d,dict), "must be a type dictionary"
-    assert len(d)>0, "the given dictionnary is empty"
+    assert isinstance(d, dict), "must be a type dictionary"
+    assert len(d) > 0, "the given dictionnary is empty"
     dict_items = d.items()
     formatted_string = ""
-    level=level #level of the dict
+    level = level  # level of the dict
 
     if issubdict:
-        formatted_string = "\n"+formatted_string
-    for key,value in dict_items:
-        if isinstance(value,dict):
-            new_level = level+1
-            value = dict_to_string(value,level=new_level,issubdict=True)
+        formatted_string = "\n" + formatted_string
+    for key, value in dict_items:
+        if isinstance(value, dict):
+            new_level = level + 1
+            value = dict_to_string(value, level=new_level, issubdict=True)
         if issubdict:
-            nn='\t'*level
+            nn = "\t" * level
             formatted_string += f"{nn}{key} : {value} \n"
         else:
             formatted_string += f"{key} : {value} \n"
 
     return formatted_string
+
+
+# ===================================
+def _order_format(order):
+    if len(order) == 0:
+        return ""
+    (
+        symbol,
+        orderId,
+        orderListId,
+        clientOrderId,
+        transactTime,
+        price,
+        origQty,
+        executedQty,
+        cummulativeQuoteQty,
+        status,
+        timeInForce,
+        order_type,
+        side,
+    ) = order
+
+    transactTime = str(datetime.fromtimestamp(float(float(order[4]) / 1000)))[:-4] +' '+ timeInForce   
+    data = [symbol,side,price,executedQty,transactTime]
+    return " | ".join(data)
+    # return  f'{cryptopair} |   {tt}  |   {order_type}   | \n '
+
+
+def order_restructure(orders):
+    result = "symbol | type | price | quantity | time"
+    for order in orders:
+        # print(len(order))
+        result +=' \n'
+        result += _order_format(order)
+    return result

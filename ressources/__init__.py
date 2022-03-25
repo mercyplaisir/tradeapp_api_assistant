@@ -1,4 +1,0 @@
-from ressources.telegram_bot import TelegramBot
-from ressources.tradeapp_bot import TradeappBotController
-from ressources.coin_handler import CoinController
-from ressources.cryptopair_handler import CryptopairController

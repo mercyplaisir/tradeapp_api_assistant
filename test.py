@@ -51,6 +51,6 @@ class Order:
 
 if __name__ == '__main__':
     url ="http://127.0.0.1:5000"
-    endpoint = "/telegram/status"
-    req = requests.get(url+endpoint)
+    endpoint = "/get/orders"
+    req = requests.get(url+endpoint)#,data={"data":"hello"})
     print(req.json())

@@ -1,1 +1,6 @@
-{"profit": "35", "status": "on", "error": "no"}
+{
+    "profit": "35",
+    "status": "on",
+    "errors": { "type": "FileNotFound", "value": "not found" },
+    "data": "hello"
+}
